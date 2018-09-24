@@ -9,7 +9,12 @@
 import Foundation
 import CloudKit
 
-class Entry {
+class Entry: Equatable {
+    
+    static func == (lhs: Entry, rhs: Entry) -> Bool {
+        if lhs.ckRecordID != rhs.ckRecordID { return false }
+        return true
+    }
     
     let title: String
     var bodytext: String = ""
