@@ -50,6 +50,24 @@ class EntryController {
         }
     }
     
+    func deleteEntry(entryToDelete: Entry) {
+        
+        // need recordID to delete from CloudKit
+        let recordID = entryToDelete.ckRecordID
+        
+        CKContainer.default().privateCloudDatabase.delete(withRecordID: recordID) { (record, error) in
+            if let error = error {
+                print("There was an error in \(#function); \(error); \(error.localizedDescription)")
+                return
+            }
+            
+            if record != nil {
+                guard let index = self.entries.index(of: entryToDelete) else { return }
+                self.entries.remove(at: index)
+            }
+        }
+    }
+    
     func fetchEntries(completion: @escaping (Bool) -> ()) {
         
         let predicate = NSPredicate(value: true)
@@ -68,4 +86,16 @@ class EntryController {
         }
     }
     
+    func update(entryToUpdate: Entry, newTitle: String, newBodyText: String) {
+        
+        let recordsOperation = CKModifyRecordsOperation()
+        
+        // initialize new entry with updated values
+        let updatedEntry = Entry(title: newTitle, bodytext: newBodyText)
+        let recordsToSave = [updatedEntry.cloudKitRecord]
+        
+        recordsOperation.savePolicy = .changedKeys
+        recordsOperation.recordsToSave = recordsToSave
+        recordsOperation.qualityOfService = .userInteractive
+    }
 }
