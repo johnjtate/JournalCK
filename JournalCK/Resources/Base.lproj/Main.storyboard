@@ -35,7 +35,7 @@
                                     </subviews>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <segue destination="phA-mp-cbE" kind="show" identifier=" showEntry" id="H6m-pv-0vg"/>
+                                    <segue destination="phA-mp-cbE" kind="show" identifier="showEntry" id="H6m-pv-0vg"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
