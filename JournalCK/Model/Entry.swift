@@ -16,19 +16,9 @@ class Entry: Equatable {
         return true
     }
     
-    let title: String
+    var title: String
     var bodytext: String = ""
-    let ckRecordID: CKRecord.ID
-    
-    // MARK: - CloudKit
-    var cloudKitRecord: CKRecord {
-        
-        let record = CKRecord(recordType: Constants.recordKey)
-        record.setValue(title, forKey: Constants.titleKey)
-        record.setValue(bodytext, forKey: Constants.bodyKey)
-        record.setValue(ckRecordID, forKey: Constants.recordIdKey)
-        return record
-    }
+    var ckRecordID: CKRecord.ID
     
     init(title: String, bodytext: String, ckRecordID: CKRecord.ID = CKRecord.ID(recordName: UUID().uuidString)) {
         
@@ -49,5 +39,15 @@ struct Constants {
     static let recordKey = "Entry"
     static let titleKey = "Title"
     static let bodyKey = "Body"
-    static let recordIdKey = "Record ID"
+}
+
+extension CKRecord {
+    
+    convenience init(entry: Entry) {
+        
+        self.init(recordType: Constants.recordKey, recordID: entry.ckRecordID)
+        
+        self.setValue(entry.title, forKey: Constants.titleKey)
+        self.setValue(entry.bodytext, forKey: Constants.bodyKey)
+    }
 }

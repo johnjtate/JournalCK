@@ -17,13 +17,15 @@ class EntryController {
     // source of truth
     var entries: [Entry] = []
     
+    let privateDB = CKContainer.default().privateCloudDatabase
+    
     // CRUD functions
     func saveEntry(_ entry: Entry, completion: @escaping (Bool) -> ()) {
         
-        // call computed property to turn entry into a CKRecord
-        let record = entry.cloudKitRecord
+        // call convenience initializer to turn entry into a CKRecord
+        let record = CKRecord(entry: entry)
         
-        CKContainer.default().privateCloudDatabase.save(record) { (record, error) in
+        privateDB.save(record) { (record, error) in
             if let error = error {
                 print("There was an error in \(#function); \(error); \(error.localizedDescription)")
                 completion(false); return
@@ -50,20 +52,21 @@ class EntryController {
         }
     }
     
-    func deleteEntry(entryToDelete: Entry) {
+    func deleteEntry(entryToDelete: Entry, completion: @escaping (Bool) ->()) {
         
-        // need recordID to delete from CloudKit
-        let recordID = entryToDelete.ckRecordID
+        // delete locally
+        guard let index = self.entries.index(of: entryToDelete) else { return }
+        self.entries.remove(at: index)
         
-        CKContainer.default().privateCloudDatabase.delete(withRecordID: recordID) { (record, error) in
+        // delete from CloudKit using recordID
+        privateDB.delete(withRecordID: entryToDelete.ckRecordID) { (_, error) in
             if let error = error {
                 print("There was an error in \(#function); \(error); \(error.localizedDescription)")
+                completion(false)
                 return
-            }
-            
-            if record != nil {
-                guard let index = self.entries.index(of: entryToDelete) else { return }
-                self.entries.remove(at: index)
+            } else {
+                print("record deleted from CloudKit")
+                completion(true)
             }
         }
     }
@@ -73,7 +76,7 @@ class EntryController {
         let predicate = NSPredicate(value: true)
         let query = CKQuery(recordType: Constants.recordKey, predicate: predicate)
         
-        CKContainer.default().privateCloudDatabase.perform(query, inZoneWith: nil) { (records, error) in
+        privateDB.perform(query, inZoneWith: nil) { (records, error) in
             if let error = error {
                 print("There was an error in \(#function); \(error); \(error.localizedDescription)")
                 completion(false)
@@ -86,16 +89,35 @@ class EntryController {
         }
     }
     
-    func update(entryToUpdate: Entry, newTitle: String, newBodyText: String) {
+    func updateEntry(entryToUpdate: Entry, newTitle: String, newBodyText: String, completion: @escaping (Bool) -> Void) {
         
-        let recordsOperation = CKModifyRecordsOperation()
+        // update local entry
+        entryToUpdate.title = newTitle
+        entryToUpdate.bodytext = newBodyText
         
-        // initialize new entry with updated values
-        let updatedEntry = Entry(title: newTitle, bodytext: newBodyText)
-        let recordsToSave = [updatedEntry.cloudKitRecord]
-        
-        recordsOperation.savePolicy = .changedKeys
-        recordsOperation.recordsToSave = recordsToSave
-        recordsOperation.qualityOfService = .userInteractive
+        // update entry's remote record
+        privateDB.fetch(withRecordID: entryToUpdate.ckRecordID) { (record, error) in
+            
+            if let error = error{
+                print("\(error.localizedDescription) \(error) in function: \(#function)")
+                completion(false)
+                return
+            }
+            
+            guard let record = record else { completion(false) ; return }
+            
+            record[Constants.titleKey] = newTitle
+            record[Constants.bodyKey] = newBodyText
+            
+            let operation = CKModifyRecordsOperation(recordsToSave: [record], recordIDsToDelete: nil)
+            operation.savePolicy = .changedKeys
+            operation.queuePriority = .high
+            operation.qualityOfService = .userInitiated
+            operation.modifyRecordsCompletionBlock = { (records, recordIDs, error) in
+                completion(true)
+            }
+            self.privateDB.add(operation)
+        }
+    
     }
 }

@@ -14,6 +14,8 @@
 		87C0A197215983520019729C /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87C0A196215983520019729C /* CloudKit.framework */; };
 		87C0A1992159838E0019729C /* Entry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87C0A1982159838E0019729C /* Entry.swift */; };
 		87C0A19B21598D450019729C /* EntryController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87C0A19A21598D450019729C /* EntryController.swift */; };
+		87C0A19D21599F880019729C /* EntryTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87C0A19C21599F880019729C /* EntryTableViewController.swift */; };
+		87C0A19F21599F9D0019729C /* EntryDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87C0A19E21599F9D0019729C /* EntryDetailViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +29,8 @@
 		87C0A196215983520019729C /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		87C0A1982159838E0019729C /* Entry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entry.swift; sourceTree = "<group>"; };
 		87C0A19A21598D450019729C /* EntryController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryController.swift; sourceTree = "<group>"; };
+		87C0A19C21599F880019729C /* EntryTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryTableViewController.swift; sourceTree = "<group>"; };
+		87C0A19E21599F9D0019729C /* EntryDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryDetailViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +105,8 @@
 		87C0A193215982B10019729C /* View Controller */ = {
 			isa = PBXGroup;
 			children = (
+				87C0A19C21599F880019729C /* EntryTableViewController.swift */,
+				87C0A19E21599F9D0019729C /* EntryDetailViewController.swift */,
 			);
 			path = "View Controller";
 			sourceTree = "<group>";
@@ -194,6 +200,8 @@
 			files = (
 				87C0A19B21598D450019729C /* EntryController.swift in Sources */,
 				87C0A1992159838E0019729C /* Entry.swift in Sources */,
+				87C0A19D21599F880019729C /* EntryTableViewController.swift in Sources */,
+				87C0A19F21599F9D0019729C /* EntryDetailViewController.swift in Sources */,
 				87C0A17F21597EDE0019729C /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
